@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Request Service — JD Communication Services</title><link rel="stylesheet" href="style.css"></head>
+<body>
+  <div class="wrap">
+    <header class="header">
+      <div class="brand"><img src="assets/jd-logo.svg" class="logo" alt="JD logo"><div><h1>JD Communication Services</h1></div></div>
+      <nav class="nav"><a href="index.html">Home</a><a href="services.html">Services</a><a href="request.html">Request</a></nav>
+    </header>
+    <main style="margin-top:18px">
+      <h2>Request a Service</h2>
+      <p class="muted">Select service and upload required documents. After submission you will see a confirmation message.</p>
+      <form id="request-form" class="card" enctype="multipart/form-data">
+        <div class="form-row"><label>Full Name</label><input id="fullName" name="from_name" class="input" required></div>
+        <div class="form-row"><label>Phone Number</label><input id="phone" name="phone" class="input" required></div>
+        <div class="form-row"><label>Service Type</label>
+          <select id="serviceType" name="service" class="input" required>
+            <option value="">-- Select Service --</option>
+            <option value="Community Certificate">Community Certificate</option>
+            <option value="Income Certificate">Income Certificate</option>
+            <option value="Nativity Certificate">Nativity Certificate</option>
+            <option value="PSTM Certificate">PSTM Certificate</option>
+            <option value="OBC Certificate">OBC Certificate</option>
+            <option value="Voter ID">Voter ID</option>
+            <option value="PAN Card">PAN Card</option>
+          </select>
+        </div>
+        <div id="uploads-area" class="card" style="margin-top:12px">
+          <h4>Required Documents</h4>
+          <div id="uploads-list"></div>
+        </div>
+        <div style="margin-top:12px" class="form-row"><button id="submitBtn" class="btn primary" type="submit">Submit Request</button><span id="form-status" class="status"></span></div>
+      </form>
+    </main>
+    <footer class="footer">Contact: jdguru2310@gmail.com • © 2025 JD Communication Services</footer>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function(){{ emailjs.init('M_YXuYhZTJQgO_ggrFwSb'); }})();
+  </script>
+  <script>
+  const SERVICE_REQUIREMENTS = {"Community Certificate": ["Passport size photo", "Aadhaar card", "Ration card", "Parents or siblings community Certificate", "Signature"], "Income Certificate": ["Passport size photo", "Aadhaar card", "Ration card", "Signature"], "Nativity Certificate": ["Passport size photo", "Aadhaar card", "Ration card", "Birth certificate", "Signature"], "PSTM Certificate": ["Basic details", "School TC"], "OBC Certificate": ["Passport size photo", "Aadhaar card", "Ration card", "Income certificate", "Community Certificate", "Signature"], "Voter ID": ["Passport size photo", "10th marksheet", "Aadhaar card", "Parent voter id"], "PAN Card": ["Passport size photo", "Aadhaar card", "Signature"]};
+  const uploadsList = document.getElementById('uploads-list');
+  const serviceSelect = document.getElementById('serviceType');
+  const form = document.getElementById('request-form');
+  const statusEl = document.getElementById('form-status');
+  function createFileInput(name, idx){{
+    const wrapper = document.createElement('div');
+    wrapper.className = 'file-input';
+    const label = document.createElement('label');
+    label.textContent = name;
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.name = 'file_' + idx;
+    input.accept = '.pdf,.jpg,.jpeg,.png';
+    input.required = true;
+    wrapper.appendChild(label);
+    wrapper.appendChild(input);
+    return wrapper;
+  }}
+  function showRequirements(service){{
+    uploadsList.innerHTML = '';
+    if(!service) return;
+    const reqs = SERVICE_REQUIREMENTS[service] || [];
+    reqs.forEach((r, i) => {{
+      if(r.toLowerCase().includes('basic detail')){{
+        const wrapper = document.createElement('div');
+        wrapper.className = 'form-row';
+        const label = document.createElement('label'); label.textContent = 'Basic details';
+        const input = document.createElement('input'); input.name = 'basic_details'; input.className = 'input'; input.required = true;
+        wrapper.appendChild(label); wrapper.appendChild(input); uploadsList.appendChild(wrapper);
+      }} else {{
+        uploadsList.appendChild(createFileInput(r, i));
+      }}
+    }});
+  }}
+  serviceSelect.addEventListener('change', function(){ showRequirements(this.value); });
+  const params = new URLSearchParams(location.search);
+  const pre = params.get('service');
+  if(pre){ serviceSelect.value = pre; showRequirements(pre); }
+  form.addEventListener('submit', function(e){ e.preventDefault(); statusEl.textContent = 'Submitting...';
+    emailjs.sendForm('service_7fwtzfa', 'ApO3bNQPrRL95pI1G', this).then(function(){ statusEl.textContent = '✅ Thanks for contacting JD Communication Services! Our service team will contact you soon.'; form.reset(); uploadsList.innerHTML = ''; }, function(err){ console.error('EmailJS error:', err); statusEl.textContent = '❌ Error sending request. Please try again.'; });
+  });
+  </script>
+</body>
+</html>
