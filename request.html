@@ -9,27 +9,80 @@
     <main style="margin-top:18px">
       <h2>Request a Service</h2>
       <p class="muted">Select service and upload required documents. After submission you will see a confirmation message.</p>
-      <form id="request-form" class="card" enctype="multipart/form-data">
-        <div class="form-row"><label>Full Name</label><input id="fullName" name="from_name" class="input" required></div>
-        <div class="form-row"><label>Phone Number</label><input id="phone" name="phone" class="input" required></div>
-        <div class="form-row"><label>Service Type</label>
-          <select id="serviceType" name="service" class="input" required>
-            <option value="">-- Select Service --</option>
-            <option value="Community Certificate">Community Certificate</option>
-            <option value="Income Certificate">Income Certificate</option>
-            <option value="Nativity Certificate">Nativity Certificate</option>
-            <option value="PSTM Certificate">PSTM Certificate</option>
-            <option value="OBC Certificate">OBC Certificate</option>
-            <option value="Voter ID">Voter ID</option>
-            <option value="PAN Card">PAN Card</option>
-          </select>
-        </div>
-        <div id="uploads-area" class="card" style="margin-top:12px">
-          <h4>Required Documents</h4>
-          <div id="uploads-list"></div>
-        </div>
-        <div style="margin-top:12px" class="form-row"><button id="submitBtn" class="btn primary" type="submit">Submit Request</button><span id="form-status" class="status"></span></div>
-      </form>
+     <form id="serviceForm">
+  <h2>Apply for a Service</h2>
+
+  <!-- Basic Details -->
+  <label for="name">Full Name:</label>
+  <input type="text" id="name" name="from_name" placeholder="Enter your name" required />
+
+  <label for="phone">Phone Number:</label>
+  <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required />
+
+  <label for="service">Select Service:</label>
+  <select id="service" name="service" required>
+    <option value="">-- Select a Service --</option>
+    <option value="Community Certificate">Community Certificate</option>
+    <option value="Income Certificate">Income Certificate</option>
+    <option value="Nativity Certificate">Nativity Certificate</option>
+    <option value="PSTM Certificate">PSTM Certificate</option>
+    <option value="OBC Certificate">OBC Certificate</option>
+    <option value="Voter ID">Voter ID</option>
+    <option value="PAN Card">PAN Card</option>
+  </select>
+
+  <!-- Optional File Uploads -->
+  <p style="color: gray;">Uploading documents is optional. You may also submit later.</p>
+
+  <label>Passport Size Photo:</label>
+  <input type="file" id="photo" name="photo" accept=".jpg,.jpeg,.png,.pdf" />
+
+  <label>Aadhaar Card:</label>
+  <input type="file" id="aadhaar" name="aadhaar" accept=".jpg,.jpeg,.png,.pdf" />
+
+  <label>Ration Card:</label>
+  <input type="file" id="ration" name="ration" accept=".jpg,.jpeg,.png,.pdf" />
+
+  <label>Signature:</label>
+  <input type="file" id="signature" name="signature" accept=".jpg,.jpeg,.png,.pdf" />
+
+  <!-- Submit Button -->
+  <button type="submit" id="submitBtn">Submit</button>
+</form>
+
+<!-- Success Message -->
+<p id="successMessage" style="display:none; color:green; font-weight:bold; margin-top:10px;">
+  ✅ Thanks for contacting JD Communication Services!<br />
+  Our service team will contact you soon.
+</p>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>
+  emailjs.init("M_YXuYhZTJQgO_ggrFwSb"); // your EmailJS Public Key
+
+  document.getElementById("serviceForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const submitBtn = document.getElementById("submitBtn");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Sending...";
+
+    emailjs
+      .sendForm("service_7fwtzfa", "ApO3bNQPrRL95pI1G", this)
+      .then(() => {
+        document.getElementById("successMessage").style.display = "block";
+        this.reset();
+      })
+      .catch((error) => {
+        alert("Error sending request. Please try again.");
+        console.error("EmailJS Error:", error);
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit";
+      });
+  });
+</script>
     </main>
     <footer class="footer">Contact: jdguru2310@gmail.com • © 2025 JD Communication Services</footer>
   </div>
@@ -52,7 +105,7 @@
     input.type = 'file';
     input.name = 'file_' + idx;
     input.accept = '.pdf,.jpg,.jpeg,.png';
-    input. = true;
+    input = true;
     wrapper.appendChild(label);
     wrapper.appendChild(input);
     return wrapper;
