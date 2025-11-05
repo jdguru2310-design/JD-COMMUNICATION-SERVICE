@@ -18,7 +18,7 @@
 
     <main style="margin-top:18px">
       <h2>Request a Service</h2>
-      <p class="muted">Select service and upload required documents. After submission you will see a confirmation message.</p>
+      <p class="muted">Select service and enter the basic details. After submission you will see a confirmation message.</p>
 
       <!-- SIMPLE FORM (file uploads optional) -->
       <form id="serviceForm" class="card" enctype="multipart/form-data">
@@ -46,28 +46,7 @@
           </select>
         </div>
 
-        <p style="color:gray">Document uploads are optional (you may submit without uploading).</p>
-
-        <div class="form-row">
-          <label>Passport Size Photo (optional)</label>
-          <input type="file" name="file_photo" accept=".jpg,.jpeg,.png,.pdf">
-        </div>
-
-        <div class="form-row">
-          <label>Aadhaar Card (optional)</label>
-          <input type="file" name="file_aadhaar" accept=".jpg,.jpeg,.png,.pdf">
-        </div>
-
-        <div class="form-row">
-          <label>Ration Card (optional)</label>
-          <input type="file" name="file_ration" accept=".jpg,.jpeg,.png,.pdf">
-        </div>
-
-        <div class="form-row">
-          <label>Signature (optional)</label>
-          <input type="file" name="file_signature" accept=".jpg,.jpeg,.png,.pdf">
-        </div>
-
+       
         <div style="margin-top:12px">
           <button type="submit" id="submitBtn" class="btn primary">Submit</button>
           <span id="form-status" class="status"></span>
