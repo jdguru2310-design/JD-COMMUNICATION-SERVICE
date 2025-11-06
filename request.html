@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Request Service — JD Communication Services</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -10,112 +10,150 @@
   <div class="wrap">
     <header class="header">
       <div class="brand">
-        <img src="assets/jd-logo.svg" class="logo" alt="JD logo">
+        <img src="assets/jd-logo.svg" class="logo" alt="JD logo"
+             onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 fill=%22%230066ff%22/><text x=%2250%25%22 y=%2260%25%22 font-size=%2240%22 font-family=%22Arial%22 fill=%22white%22 text-anchor=%22middle%22>JD</text></svg>'">
         <div><h1>JD Communication Services</h1></div>
       </div>
-      <nav class="nav"><a href="index.html">Home</a><a href="services.html">Services</a><a href="request.html">Request</a></nav>
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="request.html">Request</a>
+      </nav>
     </header>
 
     <main style="margin-top:18px">
       <h2>Request a Service</h2>
-      <p class="muted">Select service and enter the basic details. After submission you will see a confirmation message.</p>
+      <p class="muted">
+        Choose your service — the required document upload boxes will appear automatically.
+      </p>
 
-      <!-- SIMPLE FORM (file uploads optional) -->
       <form id="serviceForm" class="card" enctype="multipart/form-data">
-        <div class="form-row">
-          <label for="name">Full Name</label>
-          <input id="name" name="from_name" type="text" class="input" required>
+        <label>Full Name</label>
+        <input name="from_name" required>
+
+        <label>Phone Number</label>
+        <input name="phone" type="tel" required>
+
+        <label>Service</label>
+        <select name="service" id="service" required>
+          <option value="">-- Select a Service --</option>
+          <option value="Community Certificate">Community Certificate</option>
+          <option value="Income Certificate">Income Certificate</option>
+          <option value="Nativity Certificate">Nativity Certificate</option>
+          <option value="PSTM Certificate">PSTM Certificate</option>
+          <option value="OBC Certificate">OBC Certificate</option>
+          <option value="Voter ID">Voter ID</option>
+          <option value="PAN Card">PAN Card</option>
+        </select>
+
+        <div id="uploadFields" class="card" style="margin-top:15px;background:#f9fcff;">
+          <p style="color:gray;">Required documents for the selected service will appear here.</p>
         </div>
 
-        <div class="form-row">
-          <label for="phone">Phone Number</label>
-          <input id="phone" name="phone" type="tel" class="input" required>
-        </div>
-
-        <div class="form-row">
-          <label for="service">Service Type</label>
-          <select id="service" name="service" class="input" required>
-            <option value="">-- Select a Service --</option>
-            <option value="Community Certificate">Community Certificate</option>
-            <option value="Income Certificate">Income Certificate</option>
-            <option value="Nativity Certificate">Nativity Certificate</option>
-            <option value="PSTM Certificate">PSTM Certificate</option>
-            <option value="OBC Certificate">OBC Certificate</option>
-            <option value="Voter ID">Voter ID</option>
-            <option value="PAN Card">PAN Card</option>
-          </select>
-        </div>
-
-       
-        <div style="margin-top:12px">
-          <button type="submit" id="submitBtn" class="btn primary">Submit</button>
-          <span id="form-status" class="status"></span>
-        </div>
+        <button id="submitBtn" type="submit">Submit</button>
       </form>
 
-      <p id="successMessage" style="display:none; color:green; font-weight:bold; margin-top:10px;">
+      <p id="successMessage" style="display:none;color:green;font-weight:bold;margin-top:10px;">
         ✅ Thanks for contacting JD Communication Services!<br>
         Our service team will contact you soon.
       </p>
     </main>
 
-    <footer class="footer">Contact: jdguru2310@gmail.com • © 2025 JD Communication Services</footer>
+    <footer class="footer">
+      Contact: jdguru2310@gmail.com • © 2025 JD Communication Services
+    </footer>
   </div>
 
-  <!-- ONLY use the official browser SDK once -->
+  <!-- EmailJS -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script>
-    // == CONFIG - your EmailJS keys (already provided)
-    const EMAILJS_PUBLIC_KEY = "Wlh7hrOINO2-a7k_K";
+    // === Configuration ===
+    const EMAILJS_PUBLIC_KEY = "M_YXuYhZTJQgO_ggrFwSb";
     const EMAILJS_SERVICE_ID = "service_7fwtzfa";
-    const EMAILJS_TEMPLATE_ID = "template_bne8zmp";
+    const EMAILJS_TEMPLATE_ID = "ApO3bNQPrRL95pI1G";
+    const GOOGLE_SCRIPT_URL =
+      "https://script.google.com/macros/s/AKfycbxcdZPrDxEIeZUZdhgv6TcEEAABiyWnEbc26clVQ_V1ngGr7EjW5VTulREAghpat8Na/exec";
+    const DRIVE_FOLDER_LINK =
+      "https://drive.google.com/drive/folders/11mS62VviBudLvMl4tlqjIpCvRs3FjeHw?usp=drive_link";
 
-    // init
-    emailjs.init("Wlh7hrOINO2-a7k_K");
+    emailjs.init("M_YXuYhZTJQgO_ggrFwSb");
 
-    // form handling
-    const form = document.getElementById('serviceForm');
-    const statusEl = document.getElementById('form-status');
-    const successEl = document.getElementById('successMessage');
-    const submitBtn = document.getElementById('submitBtn');
+    const serviceDocs = {
+      "Community Certificate": ["Passport Size Photo", "Aadhaar Card", "Ration Card", "Parents or Sibling Community Certificate", "Signature"],
+      "Income Certificate": ["Passport Size Photo", "Aadhaar Card", "Ration Card", "Signature"],
+      "Nativity Certificate": ["Passport Size Photo", "Aadhaar Card", "Ration Card", "Birth Certificate", "Signature"],
+      "PSTM Certificate": ["Basic Details", "School TC"],
+      "OBC Certificate": ["Passport Size Photo", "Aadhaar Card", "Ration Card", "Income Certificate", "Community Certificate", "Signature"],
+      "Voter ID": ["Passport Size Photo", "10th Marksheet", "Aadhaar Card", "Parent Voter ID"],
+      "PAN Card": ["Passport Size Photo", "Aadhaar Card", "Signature"]
+    };
 
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      statusEl.textContent = 'Sending...';
-      submitBtn.disabled = true;
+    const uploadBox = document.getElementById("uploadFields");
+    const serviceSelect = document.getElementById("service");
 
-      // debug: enumerate files and sizes (helpful for diagnosing attachment limits)
-      const fileInputs = Array.from(form.querySelectorAll('input[type="file"]'));
-      const filesInfo = fileInputs.map(fi => {
-        const f = fi.files[0];
-        return { name: fi.name, fileName: f ? f.name : 'no-file', size: f ? f.size : 0 };
+    serviceSelect.addEventListener("change", () => {
+      uploadBox.innerHTML = "";
+      const selected = serviceSelect.value;
+      if (!selected) {
+        uploadBox.innerHTML =
+          "<p style='color:gray;'>Required documents for the selected service will appear here.</p>";
+        return;
+      }
+      serviceDocs[selected].forEach((doc, i) => {
+        const label = document.createElement("label");
+        label.textContent = doc + " (optional)";
+        const input = document.createElement("input");
+        input.type = "file";
+        input.name = "file_" + i;
+        input.accept = ".jpg,.jpeg,.png,.pdf";
+        uploadBox.appendChild(label);
+        uploadBox.appendChild(input);
       });
-      console.info('Files being sent:', filesInfo);
+    });
 
-      // send via EmailJS - sendForm will include file inputs as attachments if provided
-      emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, form)
-        .then(function(response) {
-          console.info('EmailJS success:', response);
-          statusEl.textContent = '';
-          successEl.style.display = 'block';
-          form.reset();
-          // hide after a while
-          setTimeout(()=> successEl.style.display = 'none', 8000);
-        }, function(error) {
-          // detailed error logging
-          console.error('EmailJS error (full):', error);
-          // build friendly message
-          let errMsg = 'Error sending request. Please try again.';
-          try {
-            if (error && error.status) errMsg += ' (status: ' + error.status + ')';
-            if (error && error.text) errMsg += ' — ' + error.text;
-          } catch(e){}
-          statusEl.textContent = errMsg;
-          alert(errMsg + '\\nCheck browser console for details.');
-        })
-        .finally(function() {
-          submitBtn.disabled = false;
+    const form = document.getElementById("serviceForm");
+    const successEl = document.getElementById("successMessage");
+    const submitBtn = document.getElementById("submitBtn");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Uploading...";
+
+      const formData = new FormData(form);
+
+      try {
+        // 1️⃣ Upload to Google Drive
+        const uploadRes = await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          body: formData
         });
+        const uploadText = await uploadRes.text();
+        console.log("Drive upload result:", uploadText);
+
+        // 2️⃣ Send Email notification
+        submitBtn.textContent = "Sending Email...";
+        await emailjs.sendForm(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, form);
+
+        // 3️⃣ Show success
+        successEl.innerHTML =
+          "✅ Thanks for contacting JD Communication Services!<br>" +
+          "Our service team will contact you soon.<br>" +
+          "📂 Files saved here: <a href='" +
+          DRIVE_FOLDER_LINK +
+          "' target='_blank'>Open Google Drive Folder</a>";
+        successEl.style.display = "block";
+        form.reset();
+        uploadBox.innerHTML =
+          "<p style='color:gray;'>Required documents for the selected service will appear here.</p>";
+        setTimeout(() => (successEl.style.display = "none"), 8000);
+      } catch (err) {
+        console.error("Upload/Email error:", err);
+        alert("Upload or email failed. Please check console for details.");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit";
+      }
     });
   </script>
 </body>
